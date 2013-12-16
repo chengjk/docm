@@ -1,3 +1,7 @@
+<%@page import="java.util.Iterator"%>
+<%@page import="net.docm.po.MyFile"%>
+<%@page import="net.docm.po.MyDoc"%>
+<%@page import="net.docm.dao.Dao"%>
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -18,7 +22,56 @@
 </style>
 </head>
 
-<body>
+<script type="text/javascript">
+function pageonload(){
+	$("tr a").click(function(){
+		var type=$(this).attr("name");
+		if(type=="view"){
+			$("#frmGoEditor input").val($(this).attr("recordid"));
+			$("#frmGoEditor").submit();
+		}else if(type=="edit"){
+			$("#frmGoEditor input").val($(this).attr("recordid"));
+			$("#frmGoEditor").submit();
+		}else if(type=="delete"){
+			$.ajax({
+				cache:true,
+				url:"./delete.jsp",
+				data:"id="+$(this).attr("recordid"),
+				dataType:"text",
+				method:"get",
+				success:function(data){
+					alert(data);
+					javascript:window.top.location.reload();
+				},
+				error:function(data){
+					alert(data);
+					javascript:window.top.location.reload();
+				}
+			});
+			
+			
+		}
+		
+	});
+}
+</script>
+<body onload="pageonload()">
+	<%
+	Dao dao=new Dao();
+	//dao.deleteAllDoc();
+	
+// 	MyDoc doc=new MyDoc();
+// 	doc.setKey("key");
+// 	doc.setType("txt");
+// 	doc.setHtmltext("<p>test</p>");
+// 	dao.save(doc);
+	
+	Iterable<MyDoc> docs=dao.findAllDoc();
+	Iterator<MyDoc> itd=docs.iterator();
+	MyDoc d;
+
+	Iterable<MyFile> files=dao.findAllFile();
+	%>
 	<div class="container">
 		<div class="row">
 			<a class="btn btn-primary " href="./editor.jsp">新建</a>
@@ -33,19 +86,26 @@
 					<th scope="col">关键字</th>
 					<th scope="col">操作</th>
 				</tr>
+				<% while(itd.hasNext()){
+					d=itd.next();
+					%>
 				<tr>
-					<th scope="row">&nbsp;</th>
-					<td>&nbsp;</td>
-					<td>&nbsp;</td>
+					<th scope="row"><%=d.getId()%></th>
+					<td><%=d.getType()%></td>
+					<td><%=d.getKey()%></td>
 					<td>
-						<a>查看</a>
-						<a>编辑</a>
-						<a>删除</a>
+						<a recordid="<%=d.getId()%>" name="view">查看</a>
+						<a recordid="<%=d.getId()%>" name="edit">编辑</a>
+						<a recordid="<%=d.getId()%>" name="delete">删除</a>
 					</td>
 				</tr>
+				<%} %>
 			</table>
 		</div>
 	</div>
+	<form id="frmGoEditor" action="./editor.jsp" method="get" target="_blank">
+		<input name="id" type="hidden"/>
+	</form>
 
 </body>
 </html>

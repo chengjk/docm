@@ -1,3 +1,5 @@
+<%@page import="net.docm.po.MyDoc"%>
+<%@page import="net.docm.dao.Dao"%>
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -10,23 +12,58 @@
 <script type="text/javascript" charset="utf-8"
 	src="ueditor135/ueditor.config.js"></script>
 <script type="text/javascript" charset="utf-8"
-	src="ueditor135/ueditor.all.min.js">
-	
-</script>
+	src="ueditor135/ueditor.all.min.js"></script>
 <script type="text/javascript" charset="utf-8"
 	src="ueditor135/lang/zh-cn/zh-cn.js"></script>
+<link rel="shortcut icon" href="assets/bootstrap/ico/favicon.png">
+<link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet"
+	media="screen">
+<link href="assets/bootstrap/css/bootstrap-responsive.css"
+	rel="stylesheet">
+<script src="assets/jquery/jquery-1.9.1.min.js"></script>
+<script src="assets/bootstrap/js/bootstrap.min.js"></script>
 <style type="text/css">
 .clear {
 	clear: both;
 }
 </style>
+
+<script type="text/javascript">
+	function pageonload(){
+		//alert($("#content").val());
+		insertHtml($("#content").val());
+	}
+
+</script>
 </head>
-<body>
+<body onload="pageonload()">
+	<%
+	Dao dao=new Dao();
+	MyDoc doc;
+	String id=request.getParameter("id");
+	
+	//id="1387193058065"; //test
+	System.out.println(id);
+	if(id==null||id==""){
+		doc=new MyDoc();
+	}else{
+		doc= dao.find(id);
+	}
+	%>
+
 	<div class="container">
-		<script id="editor" type="text/plain"
-			style="width:1024px;height:500px;"></script>
+		<div class="row-fluid" style="padding-top: 5px;">
+			<form action="./add.jsp" style="vertical-align: bottom;">
+				TYPE:<input type="text" name="type" value="<%=doc.getType()%>"/>
+				Key:<input type="text" name="key" value="<%=doc.getKey()%>"/>
+			<button class="btn btn-primary pull-right" type="submit">提交</button>
+			</form>
+		</div>
+		<script id="editor" type="text/plain" style="height:500px;"></script>
+		
+		<input id="content" name="content" type="hidden" value="<%=doc.getHtmltext()%>"/>
 	</div>
-	<div id="btns">
+	<div id="btns" style="display: none">
 		<div>
 			<button onclick="getAllHtml()">获得整个html的内容</button>
 			<button onclick="getContent()">获得内容</button>
@@ -60,7 +97,7 @@
 		</div>
 
 	</div>
-	<div>
+	<div style="display: none">
 		<button onclick="createEditor()" />
 		创建编辑器
 		</button>
@@ -82,9 +119,9 @@
 		ue.blur();
 		UE.dom.domUtils.preventDefault(e)
 	}
-	function insertHtml() {
-		var value = prompt('插入html代码', '');
-		ue.execCommand('insertHtml', value)
+	function insertHtml(value) {
+		//var value = prompt('插入html代码', '');
+		ue.execCommand('insertHtml', value);
 	}
 	function createEditor() {
 		enableBtn();
@@ -128,7 +165,7 @@
 		var range = UE.getEditor('editor').selection.getRange();
 		range.select();
 		var txt = UE.getEditor('editor').selection.getText();
-		alert(txt)
+		alert(txt);
 	}
 
 	function getContentTxt() {

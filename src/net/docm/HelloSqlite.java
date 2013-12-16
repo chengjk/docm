@@ -25,7 +25,7 @@ public class HelloSqlite {
 			// 得到连接 会在你所填写的目录建一个你命名的文件数据库
 			Connection conn;
 			try {
-				conn = DriverManager.getConnection("jdbc:sqlite:db/test.db",null,null);
+				conn = DriverManager.getConnection("jdbc:sqlite:db/docm.db",null,null);
 				Statement stmt = conn.createStatement();
 				//判断表是否存在
 				ResultSet rsTables = conn.getMetaData().getTables(null, null, "student", null);
@@ -40,7 +40,7 @@ public class HelloSqlite {
 				}
 				
 				
-				conn = DriverManager.getConnection("jdbc:sqlite:db/test.db",null,null);
+				conn = DriverManager.getConnection("jdbc:sqlite:db/docm.db",null,null);
 				// 设置自动提交为false
 				conn.setAutoCommit(true);
 				stmt = conn.createStatement();

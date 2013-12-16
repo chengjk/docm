@@ -7,40 +7,45 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 
-public class DBHelper {
+public class DB {
 
 	private Connection conn=null;
 	private Statement stmt=null;// = conn.createStatement();
+	/** æ•°æ®åº“æ–‡ä»¶*/
+	private String dbfile="db/docm.db";
 	
+	public boolean updataTable=true;
 	
-	public DBHelper(){
+	public DB(){
 		try {
 			Class.forName("org.sqlite.JDBC");
 		} catch (ClassNotFoundException e) {
-			System.out.println("Êı¾İ¿âÇı¶¯Î´ÕÒµ½!");
+			System.out.println("æ•°æ®åº“é©±åŠ¨æœªæ‰¾åˆ°!");
 			e.printStackTrace();
 		}
-		createTables();
+		if(updataTable){
+			validateTables();	
+		}
 		init();
 	}
 	
 	/**
-	 * ´´½¨±í
+	 * éªŒè¯è¡¨æ ¼
 	 */
-	private void createTables(){
+	private void validateTables(){
 		try {
-			Connection _conn = DriverManager.getConnection("jdbc:sqlite:db/test.db",null,null);
-			Statement _stmt = conn.createStatement();
-			//ÅĞ¶Ï±íÊÇ·ñ´æÔÚ
-			ResultSet rsTables = conn.getMetaData().getTables(null, null, "t_documents", null);
+			Connection _conn = DriverManager.getConnection("jdbc:sqlite:"+dbfile,null,null);
+			Statement _stmt = _conn.createStatement();
+		
+			ResultSet rsTables = _conn.getMetaData().getTables(null, null, "t_documents", null);
 			if(rsTables.next()){
-				System.out.println("±í´æÒÑÔÚ¡£");
+				System.out.println("æ•°æ®è¡¨å·²å­˜åœ¨ã€‚");
 				_conn.close();
 			} else {
-				System.out.println("±í´æ²»ÔÚ£¬´´½¨±í¡£");
+				System.out.println("æ•°æ®è¡¨ä¸å·²å­˜åœ¨ï¼Œå¼€å§‹åˆ›å»ºã€‚");
 				_stmt.executeUpdate("create table t_documents (id ,type,key,htmltext);");
-				_stmt.executeUpdate("create table t_files (id£¬type,key,filepath);");
-				System.out.println("´´½¨±íÍê±Ï¡£");
+				_stmt.executeUpdate("create table t_files (id,type,key,filepath);");
+				System.out.println("æ•°æ®è¡¨åˆ›å»ºå®Œæ¯•ã€‚");
 				_conn.close();
 			}
 		} catch (SQLException e) {
@@ -50,7 +55,7 @@ public class DBHelper {
 	
 	private void init(){
 		try {
-			conn = DriverManager.getConnection("jdbc:sqlite:db/test.db",null,null);
+			conn = DriverManager.getConnection("jdbc:sqlite:"+dbfile,null,null);
 			conn.setAutoCommit(true);
 			stmt = conn.createStatement();
 		} catch (SQLException e) {
@@ -60,21 +65,6 @@ public class DBHelper {
 	
 	public Statement getStatement(){
 		return stmt;
-	}
-	
-	private void find(){
-		ResultSet rs;
-		try {
-			rs = stmt.executeQuery("select * from student;");
-			while (rs.next()) {
-				System.out.println("id = " + rs.getString("id"));
-				System.out.println("name = " + rs.getString("name"));
-			}
-			rs.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
 	}
 	
 	public void destroy(){
@@ -88,7 +78,5 @@ public class DBHelper {
 		}
 		
 	}
-	
-	
 	
 }
