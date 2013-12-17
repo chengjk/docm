@@ -12,9 +12,9 @@ public class DB {
 	private Connection conn=null;
 	private Statement stmt=null;// = conn.createStatement();
 	/** 数据库文件*/
-	private String dbfile="db/docm.db";
+	public static String dbfile="docm.db";
 	
-	public boolean updataTable=true;
+	public static boolean updataTable=true;
 	
 	public DB(){
 		try {

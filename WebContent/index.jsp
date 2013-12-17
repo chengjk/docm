@@ -65,7 +65,6 @@ function pageonload(){
 // 	doc.setType("txt");
 // 	doc.setHtmltext("<p>test</p>");
 // 	dao.save(doc);
-	
 	Iterable<MyDoc> docs=Dao.getInstance().findAllDoc();
 	Iterator<MyDoc> itd=docs.iterator();
 	MyDoc d;
