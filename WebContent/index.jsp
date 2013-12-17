@@ -40,11 +40,11 @@ function pageonload(){
 				dataType:"text",
 				method:"get",
 				success:function(data){
-					alert(data);
+					//alert(data);
 					javascript:window.top.location.reload();
 				},
 				error:function(data){
-					alert(data);
+					//alert(data);
 					javascript:window.top.location.reload();
 				}
 			});
@@ -57,8 +57,8 @@ function pageonload(){
 </script>
 <body onload="pageonload()">
 	<%
-	Dao dao=new Dao();
-	//dao.deleteAllDoc();
+	
+  //Dao.getInstance().deleteAllDoc();
 	
 // 	MyDoc doc=new MyDoc();
 // 	doc.setKey("key");
@@ -66,11 +66,11 @@ function pageonload(){
 // 	doc.setHtmltext("<p>test</p>");
 // 	dao.save(doc);
 	
-	Iterable<MyDoc> docs=dao.findAllDoc();
+	Iterable<MyDoc> docs=Dao.getInstance().findAllDoc();
 	Iterator<MyDoc> itd=docs.iterator();
 	MyDoc d;
 
-	Iterable<MyFile> files=dao.findAllFile();
+	Iterable<MyFile> files=Dao.getInstance().findAllFile();
 	%>
 	<div class="container">
 		<div class="row">

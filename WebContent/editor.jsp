@@ -30,15 +30,36 @@
 
 <script type="text/javascript">
 	function pageonload(){
-		//alert($("#content").val());
-		insertHtml($("#content").val());
+		//alert($("#content").html());
+		insertHtml($("#content").html());
+		$("#btnsubmit").click(function(){
+			var content=UE.getEditor('editor').getContent();
+			//alert(content);
+			$("#frmcontent").val(content);
+			$.ajax({
+				cache:true,
+				url:"add.jsp",
+				method:"post",
+				data:$("#frmsave").serialize(),
+				dataType:"text",
+				success:function(data){
+					//alert(data);
+					window.location.href="index.jsp?backurl="+window.location.href; 
+				},
+				error:function(data){
+					//alert(data);
+					window.location.href="error.jsp?backurl="+window.location.href; 
+				}
+			});
+			
+		});
+		
 	}
 
 </script>
 </head>
 <body onload="pageonload()">
 	<%
-	Dao dao=new Dao();
 	MyDoc doc;
 	String id=request.getParameter("id");
 	
@@ -47,21 +68,25 @@
 	if(id==null||id==""){
 		doc=new MyDoc();
 	}else{
-		doc= dao.find(id);
+		doc= Dao.getInstance().find(id);
 	}
 	%>
 
 	<div class="container">
 		<div class="row-fluid" style="padding-top: 5px;">
-			<form action="./add.jsp" style="vertical-align: bottom;">
+			<form id="frmsave" action="./add.jsp" style="vertical-align: bottom;">
+				<input type="hidden" name="id" value="<%=doc.getId()%>"/>
 				TYPE:<input type="text" name="type" value="<%=doc.getType()%>"/>
 				Key:<input type="text" name="key" value="<%=doc.getKey()%>"/>
-			<button class="btn btn-primary pull-right" type="submit">提交</button>
+				<input id="frmcontent" name="htmlcontent" type="hidden" value=""/>
+				<button id="btnsubmit" class="btn btn-primary pull-right" type="button">提交</button>
 			</form>
 		</div>
 		<script id="editor" type="text/plain" style="height:500px;"></script>
+		<div id="content" style="display: none">
+		<%=doc.getHtmltext()%>
+		</div>
 		
-		<input id="content" name="content" type="hidden" value="<%=doc.getHtmltext()%>"/>
 	</div>
 	<div id="btns" style="display: none">
 		<div>

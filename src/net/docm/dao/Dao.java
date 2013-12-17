@@ -15,10 +15,13 @@ public class Dao {
 
 	private DB db=null;
 	private Statement stmt=null;
-	
+	private static Dao _instance=new Dao();
 	public Dao(){
 		db=new DB();
 		stmt=db.getStatement();
+	}
+	public  static Dao getInstance(){
+		return _instance==null?new Dao():_instance;
 	}
 	
 	//----------------------t_docments--------------------
@@ -47,23 +50,27 @@ public class Dao {
 	 * @param doc
 	 * @return
 	 */
-	public int update(MyDoc doc){
+	public boolean saveOrUpdate(MyDoc doc){
 		String id=doc.getId();
-		if(id==null||id.trim()==""){
+		int flag=-1;
+		if(id==null||"null".equalsIgnoreCase(id.trim())||"".equalsIgnoreCase(id.trim())){
 			save(doc);
 		}
-		String sql="update t_documents set (type,key,filepath) values('"
-				+ doc.getType()+"','"
-				+ doc.getKey()+"','"
-				+ doc.getHtmltext()+"','"
-				+ "')";
-		
+		String sql="update t_documents set "
+				+ "type= '"+doc.getType()+"'"
+				+ ",key= '"+doc.getKey()+"'"
+				+ ",htmltext='"+doc.getHtmltext()+"' "
+				+ "where id='"+id+"';";
+		System.out.println(sql);
 		try {
-			return stmt.executeUpdate(sql);
+			flag= stmt.executeUpdate(sql);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return -1;
+		if(flag>0){
+			return true;
+		}
+		return false;
 	}
 	/**
 	 * 删除文档
@@ -72,6 +79,7 @@ public class Dao {
 	 */
 	public boolean deleteDoc(String id){
 		String sql="delete from t_documents where id ='"+id+"'";
+		System.out.println(sql);
 		try {
 		  return stmt.execute(sql);
 		} catch (SQLException e) {
@@ -82,6 +90,7 @@ public class Dao {
 	
 	public boolean deleteAllDoc( ){
 		String sql="delete from t_documents";
+		System.out.println(sql);
 		try {
 		  return stmt.execute(sql);
 		} catch (SQLException e) {
@@ -100,6 +109,7 @@ public class Dao {
 		ResultSet rs;
 		try {
 			String sql="select * from t_documents where id='"+id+"'";
+			System.out.println(sql);
 			rs = stmt.executeQuery(sql);
 			while (rs.next()) {
 				doc=new MyDoc();
@@ -170,14 +180,14 @@ public class Dao {
 	 */
 	public int update(MyFile f){
 		String id=f.getId();
-		if(id==null||id.trim()==""){
+		if(id==null||"null".equalsIgnoreCase(id.trim())||"".equalsIgnoreCase(id.trim())){
 			save(f);
 		}
-		String sql="update t_files set (type,key,filepath) values('"
-				+ f.getType()+"','"
-				+ f.getKey()+"','"
-				+ f.getFilepath()+"','"
-				+ "')";
+		String sql="update t_documents set "
+				+ "type= '"+f.getType()+"'"
+				+ ",key= '"+f.getKey()+"'"
+				+ ",filepaht='"+f.getFilepath()+"' "
+				+ "where id='"+id+"';";
 		
 		try {
 			return stmt.executeUpdate(sql);

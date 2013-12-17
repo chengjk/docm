@@ -8,9 +8,8 @@ if(id==null||id==""){
 	response.getWriter().println("-1");
 	return;
 }
-Dao dao =new Dao();
 System.out.println(id);
-boolean flag=dao.deleteDoc(id);
+boolean flag=Dao.getInstance().deleteDoc(id);
 if(flag){
 	response.getWriter().println("1");
 }else{
